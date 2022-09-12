@@ -110,9 +110,9 @@ public class ReservController {
 	 * @return
 	 * @throws Exception
 	 */
-	public int updateMileage(String reservID) throws Exception {
-		return service.updateMileage(reservID);
-	}	
+	public int updateMileage(int numPassengers, String courseId, String memId) throws Exception {
+		return service.updateMileage(numPassengers, courseId, memId);
+	}
 	
 	public List<CheckVO> printConfirmReserve(String memId, String courseID) throws Exception {
 		return service.printConfirmReserve(memId, courseID);

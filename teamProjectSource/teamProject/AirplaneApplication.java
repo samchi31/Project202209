@@ -24,10 +24,12 @@ public class AirplaneApplication {
 			case 3:
 				// 아이디찾기
 				ASCIIArt.findId();
+				airplaneView.FindId();
 				break;
 			case 4:
 				// 비밀번호찾기
 				ASCIIArt.findPassword();
+				airplaneView.FindPassword();
 				break;
 			case 0:
 				// 종료

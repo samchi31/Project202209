@@ -12,7 +12,11 @@ public class JoinService {
 	
 	static JoinDAO dao = new JoinDAO();
 	
-	public static int insertJoin(JoinVO vo) throws Exception { // int?
+	public int insertJoin(JoinVO vo) throws Exception { // int?
 		return dao.insertJoin(vo);
+	}
+	
+	public String getMemID(String memId) throws Exception {
+		return dao.getMemID(memId);
 	}
 }
