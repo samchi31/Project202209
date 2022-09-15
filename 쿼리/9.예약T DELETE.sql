@@ -1,0 +1,22 @@
+* 예약 취소 시 예약테이블 삭제
+DELETE FROM RESERVATION
+WHERE RESERVE_ID = '예약번호';
+
+(자바 코드용 서식)
+DELETE FROM reservation WHERE
+    reserv_id = ?;
+
+1) 신우혁 이 자식 감히 취소를 한다고?! 가지마ㅜㅜ미안해ㅜㅜ내가 잘못했어..
+여하튼 2022091400001이다.
+
+DELETE FROM RESERVATION
+WHERE RESERV_ID = '2022091400001';
+
+2) 동진찡 2022091400002
+
+DELETE FROM RESERVATION
+WHERE RESERV_ID = '2022091400002';
+
+ROLLBACK;
+
+DROP TABLE RESERVATION;
