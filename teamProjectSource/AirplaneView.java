@@ -16,8 +16,8 @@ import teamProject.utils.ScanUtil;
 public class AirplaneView {
 	private LoginController loginController = LoginController.getInstance();
 	private ReservController reservController = ReservController.getInstance();
-	private CheckController checkController = new CheckController();
-	private CancelController cancelController = new CancelController();
+	private CheckController checkController = CheckController.getInstance();
+	private CancelController cancelController = CancelController.getInstance();
 
 	private String id;
 	private String passwd;

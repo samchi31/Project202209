@@ -31,32 +31,6 @@ public class CancelDAO {
          
          System.out.println("왔다");
          
-         // 2. 쿼리 작성
-//         StringBuilder builder = new StringBuilder();
-//         builder.append(" SELECT");
-//         builder.append("     a.reserv_id,");
-//         builder.append("     a.pass_name,");
-//         builder.append("     a.seat_no,");
-//         builder.append("     b.dep_location,");
-//         builder.append("     b.dep_date,");
-//         builder.append("     b.dep_time,");
-//         builder.append("     b.airport_id,");
-//         builder.append("     b.arr_time,");
-//         builder.append("     c.airline,");
-//         builder.append("     b.airplane_id");
-//         builder.append(" FROM");
-//         builder.append("     reservation a,");
-//         builder.append("     course b,");
-//         builder.append("     airplane c");
-//         builder.append(" WHERE");
-//         builder.append("     a.mem_id = 'A001'");
-//         builder.append("     AND   a.course_id = b.course_id");
-//         builder.append("     AND   b.airplane_id = c.airplane_id");
-//         builder.append(" ORDER BY");
-//         builder.append("     1");
-//
-//         String sql = builder.toString();
-         
          String sql = "SELECT"
                + "    a.reserv_id,"
                + "    a.pass_name,"
