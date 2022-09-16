@@ -1,6 +1,7 @@
 package teamProject.check;
 
 public class CheckVO { // 항공편 id 추가
+	private String cancel;
 	private String reservId;
 	private String memId;
 	private String passName;
@@ -19,6 +20,54 @@ public class CheckVO { // 항공편 id 추가
 	private String account;
 	private String bank;
 	private int mileage;
+	
+	public CheckVO(String cancel, String reservId, String passName, String courseId, String seatNo, String depLocation, String depDate,
+			String depTime, String airportId, String arrTime, String airline, String airplaneId) {
+		this.cancel = cancel;
+		this.reservId = reservId;
+		this.passName = passName;
+		this.courseId = courseId;
+		this.seatNo = seatNo;
+		this.depLocation = depLocation;
+		this.depDate = depDate;
+		this.depTime = depTime;
+		this.airportId = airportId;
+		this.arrTime = arrTime;
+		this.airline = airline;
+		this.airplaneId = airplaneId;
+	}
+	
+	public CheckVO(String cancel, String reservId, String memId, String passName, String passPhone, String passReg, String courseId,
+			String seatNo, String depLocation, String depDate, String depTime, String airportId, String arrTime,
+			String airline, String airplaneId, int price, String account, String bank, int mileage) {
+		this.cancel = cancel;
+		this.reservId = reservId;
+		this.memId = memId;
+		this.passName = passName;
+		this.passPhone = passPhone;
+		this.passReg = passReg;
+		this.courseId = courseId;
+		this.seatNo = seatNo;
+		this.depLocation = depLocation;
+		this.depDate = depDate;
+		this.depTime = depTime;
+		this.airportId = airportId;
+		this.arrTime = arrTime;
+		this.airline = airline;
+		this.airplaneId = airplaneId;
+		this.price = price;
+		this.account = account;
+		this.bank = bank;
+		this.mileage = mileage;
+	}
+
+	public String getCancel() {
+		return cancel;
+	}
+
+	public void setCancel(String cancel) {
+		this.cancel = cancel;
+	}
 
 	public String getReservId() {
 		return reservId;
@@ -161,44 +210,6 @@ public class CheckVO { // 항공편 id 추가
 	}
 
 	public void setMileage(int mileage) {
-		this.mileage = mileage;
-	}
-
-	public CheckVO(String reservId, String passName, String courseId, String seatNo, String depLocation, String depDate,
-			String depTime, String airportId, String arrTime, String airline, String airplaneId) {
-		this.reservId = reservId;
-		this.passName = passName;
-		this.courseId = courseId;
-		this.seatNo = seatNo;
-		this.depLocation = depLocation;
-		this.depDate = depDate;
-		this.depTime = depTime;
-		this.airportId = airportId;
-		this.arrTime = arrTime;
-		this.airline = airline;
-		this.airplaneId = airplaneId;
-	}
-
-	public CheckVO(String reservId, String memId, String passName, String passPhone, String passReg, String courseId,
-			String seatNo, String depLocation, String depDate, String depTime, String airportId, String arrTime,
-			String airline, String airplaneId, int price, String account, String bank, int mileage) {
-		this.reservId = reservId;
-		this.memId = memId;
-		this.passName = passName;
-		this.passPhone = passPhone;
-		this.passReg = passReg;
-		this.courseId = courseId;
-		this.seatNo = seatNo;
-		this.depLocation = depLocation;
-		this.depDate = depDate;
-		this.depTime = depTime;
-		this.airportId = airportId;
-		this.arrTime = arrTime;
-		this.airline = airline;
-		this.airplaneId = airplaneId;
-		this.price = price;
-		this.account = account;
-		this.bank = bank;
 		this.mileage = mileage;
 	}
 }

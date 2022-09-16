@@ -4,16 +4,23 @@ import java.util.List;
 
 public class CheckController {
 	private static CheckController instance = new CheckController();
-	private CheckController() { }
+
 	public static CheckController getInstance() {
 		return instance;
 	}
+
+	private CheckController() {
+	}
 	CheckSerivce service = CheckSerivce.getInstance();
 
-	public List<CheckVO> printList(String memId) throws Exception {
-		return service.printList(memId);
+	public List<CheckVO> printTotalList(String memId) throws Exception {
+		return service.printTotalList(memId);
 	}
 
+	public List<CheckVO> printReservList(String memId) throws Exception {
+		return service.printReservList(memId);
+	}
+	
 	public CheckVO printReservDetail(String typeReservId) throws Exception {
 		return service.printReservDetail(typeReservId);
 	}

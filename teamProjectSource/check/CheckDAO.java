@@ -22,7 +22,7 @@ public class CheckDAO {
 	 * @return list - 예약 목록
 	 * @throws Exception
 	 */
-	public List<CheckVO> printList(String memId) throws Exception {
+	public List<CheckVO> printTotalList(String memId) throws Exception {
 		// 0. 드라이버 로딩
 		DriverManager.registerDriver(new OracleDriver());
 
@@ -32,6 +32,7 @@ public class CheckDAO {
 		// 2. 쿼리 작성
 		StringBuilder builder = new StringBuilder();
 		builder.append("SELECT ");
+		builder.append("    a.cancel, ");
 		builder.append("    a.reserv_id, ");
 		builder.append("    a.pass_name, ");
 		builder.append("    a.course_id, ");
@@ -66,6 +67,7 @@ public class CheckDAO {
 		// 5. 쿼리 결과 가져오기
 		List<CheckVO> list = new ArrayList<>();
 		while (resultSet.next()) {
+			String cancel = resultSet.getString("cancel");
 			String reservId = resultSet.getString("reserv_id");
 			String passName = resultSet.getString("pass_name");
 			String courseId = resultSet.getString("course_id");
@@ -77,7 +79,7 @@ public class CheckDAO {
 			String arrTime = resultSet.getString("arr_time");
 			String airline = resultSet.getString("airline");
 			String airplaneId = resultSet.getString("airplane_id");
-			list.add(new CheckVO(reservId, passName, courseId, seatNo, depLocation, depDate, depTime, airportId, arrTime, airline, airplaneId));
+			list.add(new CheckVO(cancel, reservId, passName, courseId, seatNo, depLocation, depDate, depTime, airportId, arrTime, airline, airplaneId));
 		}
 
 		// 6. 자원 반납
@@ -86,6 +88,75 @@ public class CheckDAO {
 		connection.close();
 		return list;
 	}
+	
+	public List<CheckVO> printReservList(String memId) throws Exception {
+		// 0. 드라이버 로딩
+		DriverManager.registerDriver(new OracleDriver());
+
+		// 1. 접속
+		Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.35.43:1521:xe", "ks95", "java");
+
+		// 2. 쿼리 작성
+		StringBuilder builder = new StringBuilder();
+		builder.append("SELECT ");
+		builder.append("    a.cancel, ");
+		builder.append("    a.reserv_id, ");
+		builder.append("    a.pass_name, ");
+		builder.append("    a.course_id, ");
+		builder.append("    a.seat_no, ");
+		builder.append("    b.dep_location, ");
+		builder.append("    b.dep_date, ");
+		builder.append("    b.dep_time, ");
+		builder.append("    b.airport_id, ");
+		builder.append("    b.arr_time,  ");
+		builder.append("    c.airline, ");
+		builder.append("    b.airplane_id ");
+		builder.append("FROM ");
+		builder.append("    reservation a, ");
+		builder.append("    course b, ");
+		builder.append("    airplane c ");
+		builder.append("WHERE ");
+		builder.append("    a.mem_id = ? ");
+		builder.append("    AND	  a.cancel = 'N' ");
+		builder.append("    AND   a.course_id = b.course_id ");
+		builder.append("    AND   b.airplane_id = c.airplane_id ");
+		builder.append("ORDER BY ");
+		builder.append("    1 ");
+
+		String sql = builder.toString();
+
+		// 3. 준비된 쿼리에 데이터 입력
+		PreparedStatement statement = connection.prepareStatement(sql);
+		statement.setString(1, memId);
+		
+		// 4. 쿼리 실행
+		ResultSet resultSet = statement.executeQuery();
+
+		// 5. 쿼리 결과 가져오기
+		List<CheckVO> list = new ArrayList<>();
+		while (resultSet.next()) {
+			String cancel = resultSet.getString("cancel");
+			String reservId = resultSet.getString("reserv_id");
+			String passName = resultSet.getString("pass_name");
+			String courseId = resultSet.getString("course_id");
+			String seatNo = resultSet.getString("seat_no");
+			String depLocation = resultSet.getString("dep_location");
+			String depDate = DataFormatUtil.dateFormat(resultSet.getString("dep_date"));
+			String depTime = resultSet.getString("dep_time");
+			String airportId = resultSet.getString("airport_id");
+			String arrTime = resultSet.getString("arr_time");
+			String airline = resultSet.getString("airline");
+			String airplaneId = resultSet.getString("airplane_id");
+			list.add(new CheckVO(cancel, reservId, passName, courseId, seatNo, depLocation, depDate, depTime, airportId, arrTime, airline, airplaneId));
+		}
+
+		// 6. 자원 반납
+		resultSet.close();
+		statement.close();
+		connection.close();
+		return list;
+	}
+
 
 	/**
 	 * 예약 세부 내역 보여주기
@@ -104,6 +175,7 @@ public class CheckDAO {
 		// 2. 쿼리 작성
 		StringBuilder builder = new StringBuilder();
 		builder.append("SELECT ");
+		builder.append("    cancel, ");
 		builder.append("    a.reserv_id, ");
 		builder.append("    a.mem_id, ");
 		builder.append("    a.pass_name, ");
@@ -148,6 +220,7 @@ public class CheckDAO {
 		// 5. 쿼리 결과 가져오기
 		CheckVO vo = null;
 		if (resultSet.next()) {
+			String cancel = resultSet.getString("cancel");
 			String reservId = resultSet.getString("reserv_id");
 			String memId = resultSet.getString("mem_id");
 			String passName = resultSet.getString("pass_name");
@@ -166,7 +239,7 @@ public class CheckDAO {
 			String account = resultSet.getString("account");
 			String bank = resultSet.getString("bank");
 			int mileage = resultSet.getInt("mileage");
-			vo = new CheckVO(reservId, memId, passName, passPhone, passReg, courseId, seatNo, depLocation, depDate, depTime, airline, airportId, arrTime, airplaneId, price, account, bank, mileage);
+			vo = new CheckVO(cancel, reservId, memId, passName, passPhone, passReg, courseId, seatNo, depLocation, depDate, depTime, airline, airportId, arrTime, airplaneId, price, account, bank, mileage);
 		}
 
 		// 6. 자원 반납

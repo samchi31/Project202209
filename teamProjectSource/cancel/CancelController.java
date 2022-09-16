@@ -17,7 +17,7 @@ public class CancelController {
 	}
    
    //예약정보를 삭제해준다
-   public int deleteReserve(String deleteRe) throws Exception{
-      return service.deleteReserve(deleteRe);
+   public int updateReserveList(String deleteRe) throws Exception{
+      return service.updateReserveList(deleteRe);
    }
 }
