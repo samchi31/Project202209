@@ -31,4 +31,8 @@ public class ReservService {
 	public int updateSeatRemain() throws Exception {
 		return dao.updateSeatRemain();
 	}
+	
+	public int updateMileage(String reservID) throws Exception {
+		return dao.updatePlusMileage(reservID);
+	}
 }

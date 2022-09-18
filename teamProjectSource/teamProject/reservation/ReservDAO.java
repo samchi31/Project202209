@@ -132,6 +132,7 @@ public class ReservDAO {
 		builder.append("                 ) b                                ");
 		builder.append("             WHERE                                  ");
 		builder.append("                 b.bid = a.airplane_id              ");
+		builder.append("                 AND	c.cancel = 'N'		        ");
 		builder.append("         )                                          ");
 		builder.append(" WHERE                                              ");
 		builder.append("     a.airplane_id IN (                             ");
@@ -216,7 +217,7 @@ public class ReservDAO {
 	 * @return
 	 * @throws Exception
 	 */
-	public int updatePlusMileage(String deleteRe) throws Exception {
+	public int updatePlusMileage(String reservID) throws Exception {
 		// 0. 드라이버 로딩
 //         Class.forName("oracle.jdbc.driver.OracleDriver");
 		DriverManager.registerDriver(new OracleDriver());
@@ -245,8 +246,8 @@ public class ReservDAO {
 
 		// 3. 준비된 쿼리에 데이터 입력
 		PreparedStatement statement = connection.prepareStatement(sql);
-		statement.setString(1, deleteRe);
-		statement.setString(2, deleteRe);
+		statement.setString(1, reservID);
+		statement.setString(2, reservID);
 
 		// 4. 쿼리 실행
 		int executeUpdate = statement.executeUpdate();

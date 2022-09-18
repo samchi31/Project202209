@@ -96,6 +96,7 @@ public class ReservController {
 		for (int i = 0; i < passengers.size(); i++) {
 			resultTotal += service.insertReservInfo(passengers.get(i));
 		}
+		// 비행 T 잔여좌석 update
 		updateSeatRemain();
 		return resultTotal;
 	}
@@ -108,4 +109,14 @@ public class ReservController {
 	public int updateSeatRemain() throws Exception {
 		return service.updateSeatRemain();
 	}
+	
+	/**
+	 * 회원번호 받아서 마일리지 update
+	 * @param reservID
+	 * @return
+	 * @throws Exception
+	 */
+	public int updateMileage(String reservID) throws Exception {
+		return service.updateMileage(reservID);
+	}	
 }

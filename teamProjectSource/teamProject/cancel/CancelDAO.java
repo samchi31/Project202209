@@ -65,7 +65,7 @@ public class CancelDAO {
 	}
 
 	/**
-	 * 예약번호를 받아서 해당하는 예약내역을 삭제해줌
+	 * 예약번호를 받아서 해당하는 예약내역의 cancel 값을 y로 바꿈
 	 * 
 	 * @param deleteRe 예약번호
 	 * @return

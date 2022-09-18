@@ -17,10 +17,12 @@ public class LoginDAO {
 		builder.append("         password");
 		builder.append(" from    member");
 		builder.append(" where   mem_id = ?");
+		builder.append(" and     password = ?");
 		String sql = builder.toString();
 
 		PreparedStatement statement = connection.prepareStatement(sql);
 		statement.setString(1, id);
+		statement.setString(2, passwd);
 
 		// int result = statement.executeUpdate();
 		ResultSet resultSet = statement.executeQuery();

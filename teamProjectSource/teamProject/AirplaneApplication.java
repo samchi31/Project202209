@@ -4,7 +4,6 @@ public class AirplaneApplication {
 	public static void main(String[] args) throws Exception {
 		AirplaneView airplaneView = new AirplaneView();
 
-		boolean isRun  = true;
 		while (true) {
 			// 로그인
 
@@ -18,11 +17,15 @@ public class AirplaneApplication {
 					break;
 				case 2:
 					// 예약취소
-					airplaneView.cancelMileage();
+					airplaneView.cancel();
 					break;
 				case 3:
 					// 예약확인
 					airplaneView.check();
+					break;
+				case 4:
+					// 로그아웃
+					airplaneView.setLogin(false);
 					break;
 				case 0:
 					// 프로그램 종료
@@ -30,5 +33,6 @@ public class AirplaneApplication {
 				}
 			}
 		}
+
 	}
 }
