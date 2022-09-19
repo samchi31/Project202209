@@ -11,7 +11,7 @@ public class CheckController {
 
 	private CheckController() {
 	}
-	CheckSerivce service = CheckSerivce.getInstance();
+	CheckService service = CheckService.getInstance();
 
 	public List<CheckVO> printTotalList(String memId) throws Exception {
 		return service.printTotalList(memId);
@@ -23,5 +23,9 @@ public class CheckController {
 	
 	public CheckVO printReservDetail(String typeReservId) throws Exception {
 		return service.printReservDetail(typeReservId);
+	}
+	
+	public List<CheckVO> getReserveIdList() throws Exception{
+		return service.getReserveIdList();
 	}
 }

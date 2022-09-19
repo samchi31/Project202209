@@ -2,6 +2,8 @@ package teamProject.reservation;
 
 import java.util.List;
 
+import teamProject.check.CheckVO;
+
 public class ReservService {
 	private static ReservService instance = new ReservService();
 	
@@ -28,11 +30,16 @@ public class ReservService {
 		return dao.insertReservInfo(reservInfo);
 	}
 	
-	public int updateSeatRemain() throws Exception {
-		return dao.updateSeatRemain();
-	}
 	
 	public int updateMileage(String reservID) throws Exception {
 		return dao.updatePlusMileage(reservID);
+	}
+	
+	public int updateSeatRemain(String courseId) throws Exception {
+		return dao.updateSeatRemain(courseId);
+	}
+	
+	public List<CheckVO> printConfirmReserve(String memId, String courseID) throws Exception {
+		return dao.printConfirmReserve(memId, courseID);
 	}
 }

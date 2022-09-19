@@ -1,15 +1,16 @@
 package teamProject.check;
 
+import java.sql.SQLException;
 import java.util.List;
 
-public class CheckSerivce {
-	private static CheckSerivce instance = new CheckSerivce();
+public class CheckService {
+	private static CheckService instance = new CheckService();
 
-	public static CheckSerivce getInstance() {
+	public static CheckService getInstance() {
 		return instance;
 	}
 
-	private CheckSerivce() {
+	private CheckService() {
 	}
 
 	CheckDAO dao = new CheckDAO();
@@ -25,5 +26,8 @@ public class CheckSerivce {
 	public CheckVO printReservDetail(String typeReservId) throws Exception {
 		return dao.printReservDetail(typeReservId);
 	}
-
+	
+	public List<CheckVO> getReserveIdList() throws Exception{
+		return dao.getReserveIdList();
+	}
 }

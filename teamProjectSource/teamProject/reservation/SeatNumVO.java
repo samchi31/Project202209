@@ -57,22 +57,22 @@ public class SeatNumVO {
 		// 1~6 저장
 		switch (Character.getNumericValue(str.charAt(1))) {
 		case 1:
-			row = 1;
+			row = 0;
 			break;
 		case 2:
-			row = 2;
+			row = 1;
 			break;
 		case 3:
-			row = 3;
+			row = 2;
 			break;
 		case 4:
-			row = 4;
+			row = 3;
 			break;
 		case 5:
-			row = 5;
+			row = 4;
 			break;
 		case 6:
-			row = 6;
+			row = 5;
 			break;
 		}
 	}

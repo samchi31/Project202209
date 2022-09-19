@@ -21,5 +21,7 @@ public class CancelService {
 		return dao.updateReserveList(deleteRe);
 	}
 
-	
+	public String getCourseID(String reservID) throws Exception {
+		return dao.getCourseID(reservID);
+	}
 }

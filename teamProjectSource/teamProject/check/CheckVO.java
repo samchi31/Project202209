@@ -21,6 +21,12 @@ public class CheckVO { // 항공편 id 추가
 	private String bank;
 	private int mileage;
 	
+	
+	
+	public CheckVO(String reservId) {
+		this.reservId = reservId;
+	}
+
 	public CheckVO(String cancel, String reservId, String passName, String courseId, String seatNo, String depLocation, String depDate,
 			String depTime, String airportId, String arrTime, String airline, String airplaneId) {
 		this.cancel = cancel;

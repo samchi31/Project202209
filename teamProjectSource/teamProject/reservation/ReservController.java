@@ -3,6 +3,8 @@ package teamProject.reservation;
 import java.util.ArrayList;
 import java.util.List;
 
+import teamProject.check.CheckVO;
+
 public class ReservController {
 	private static ReservController instance = new ReservController();
 
@@ -40,15 +42,15 @@ public class ReservController {
 			break;
 		}
 		// 날짜
-		switch (country) {
+		switch (date) {
 		case 1:
 			vo.setDepartDate("2022/09/14");
 			break;
 		case 2:
-			vo.setAirportID("2022/09/15");
+			vo.setDepartDate("2022/09/15");
 			break;
 		case 3:
-			vo.setAirportID("2022/09/16");
+			vo.setDepartDate("2022/09/16");
 			break;
 		}
 		// 탑승자수
@@ -97,18 +99,10 @@ public class ReservController {
 			resultTotal += service.insertReservInfo(passengers.get(i));
 		}
 		// 비행 T 잔여좌석 update
-		updateSeatRemain();
+		updateSeatRemain(passengers.get(0).getCourseID());
 		return resultTotal;
 	}
 	
-	/**
-	 * 잔여좌석 update
-	 * @return
-	 * @throws Exception
-	 */
-	public int updateSeatRemain() throws Exception {
-		return service.updateSeatRemain();
-	}
 	
 	/**
 	 * 회원번호 받아서 마일리지 update
@@ -119,4 +113,12 @@ public class ReservController {
 	public int updateMileage(String reservID) throws Exception {
 		return service.updateMileage(reservID);
 	}	
+	
+	public List<CheckVO> printConfirmReserve(String memId, String courseID) throws Exception {
+		return service.printConfirmReserve(memId, courseID);
+	}
+	
+	public int updateSeatRemain(String courseId) throws Exception {
+		return service.updateSeatRemain(courseId);
+	}
 }

@@ -20,4 +20,8 @@ public class CancelController {
    public int updateReserveList(String deleteRe) throws Exception{
       return service.updateReserveList(deleteRe);
    }
+   
+   public String getCourseID(String reservID) throws Exception {
+		return service.getCourseID(reservID);
+	}
 }

@@ -1,5 +1,6 @@
 package teamProject.reservation;
 
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -9,11 +10,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import oracle.jdbc.driver.OracleDriver;
+import teamProject.check.CheckVO;
 import teamProject.utils.DataFormatUtil;
 
+//sy 전체적인 쿼리 수정
 public class ReservDAO {
 	/**
-	 * 입력받은 도착지, 날짜, 탑승자수 를 항공편 정보 얻기 *
+	 * 입력받은 도착지, 날짜, 탑승자수로 항공편 정보 얻기 *
 	 * 
 	 * @param input 도착지, 날짜, 탑승자수
 	 * @return list 항공편 리스트 List<CourseInfoVO>
@@ -24,26 +27,27 @@ public class ReservDAO {
 		Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.35.43:1521:xe", "ks95", "java");
 
 		StringBuilder builder = new StringBuilder();
-		builder.append(" SELECT                                                       ");
-		builder.append("     a.course_id,                                             ");
-		builder.append("     a.dep_location,                                          ");
-		builder.append("     a.dep_date,                                              ");
-		builder.append("     a.dep_time,                                              ");
-		builder.append("     a.airport_id,                                            ");
-		builder.append("     a.arr_time,                                              ");
-		builder.append("     a.airplane_id,                                           ");
-		builder.append("     a.price,                                                 ");
-		builder.append("     a.distance,                                              ");
-		builder.append("     b.airline,                                               ");
-		builder.append("     b.seat_remain                                            ");
-		builder.append(" FROM                                                         ");
-		builder.append("     course a,                                                ");
-		builder.append("     airplane b                                               ");
-		builder.append(" WHERE                                                        ");
-		builder.append("     a.airplane_id = b.airplane_id                            ");
-		builder.append("     AND   a.airport_id = ?		                              ");
-		builder.append("         AND   a.dep_date = to_date( ? ,'YYYY/MM/DD')		  ");
-		builder.append("             AND   b.seat_remain >= ?                         ");
+		builder.append(" SELECT                                        ");
+		builder.append("     a.course_id,                              ");
+		builder.append("     a.dep_location,                           ");
+		builder.append("     a.dep_date,                               ");
+		builder.append("     a.dep_time,                               ");
+		builder.append("     a.airport_id,                             ");
+		builder.append("     a.arr_time,                               ");
+		builder.append("     a.airplane_id,                            ");
+		builder.append("     a.price,                                  ");
+		builder.append("     a.distance,                               ");
+		builder.append("     b.airline,                                ");
+		builder.append("     a.seat_remain                             ");
+		builder.append(" FROM                                          ");
+		builder.append("     course a,                                 ");
+		builder.append("     airplane b                                ");
+		builder.append(" WHERE                                         ");
+		builder.append("     a.airplane_id = b.airplane_id             ");
+		builder.append("     AND   a.airport_id = ?                    ");
+		builder.append("     AND   a.dep_date = TO_DATE(?,'YYYY/MM/DD')");
+		builder.append("     AND   a.seat_remain >=?                   ");
+		builder.append(" ORDER BY 1                   ");
 		String sql = builder.toString();
 
 		PreparedStatement statement = connection.prepareStatement(sql);
@@ -66,14 +70,15 @@ public class ReservDAO {
 		connection.close();
 		return list;
 	}
-	
+
 	/**
 	 * 비행기의 예약된 자석 번호 리스트 얻기
+	 * 
 	 * @return
 	 * @throws Exception
 	 */
 	public List<String> getSeatsNo(String courseID) throws Exception {
-		DriverManager.registerDriver(new OracleDriver()); 
+		DriverManager.registerDriver(new OracleDriver());
 		Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.35.43:1521:xe", "ks95", "java");
 
 		StringBuilder builder = new StringBuilder();
@@ -84,7 +89,8 @@ public class ReservDAO {
 		builder.append("     course b                 ");
 		builder.append(" WHERE                        ");
 		builder.append("     a.course_id = b.course_id");
-		builder.append("     and a.course_id = ?      ");
+		builder.append("     AND   a.course_id =?     ");
+		builder.append("     AND   a.cancel ='N'     ");
 		String sql = builder.toString();
 
 		PreparedStatement statement = connection.prepareStatement(sql);
@@ -92,108 +98,79 @@ public class ReservDAO {
 
 		ResultSet resultSet = statement.executeQuery();
 		List<String> list = new ArrayList<>();
-		while(resultSet.next()) {
+		while (resultSet.next()) {
 			list.add(resultSet.getString("seat_no"));
 		}
-
+		resultSet.close();
 		statement.close();
 		connection.close();
 		return list;
 	}
 	
+	public int updateSeatRemain(String courseId) throws Exception {
+	      DriverManager.registerDriver(new OracleDriver()); 
+	      Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.35.43:1521:xe", "ks95", "java");
+
+	      StringBuilder builder = new StringBuilder();
+	      builder.append(" UPDATE COURSE A                                     ");
+	      builder.append(" SET    A.SEAT_REMAIN = (                            ");
+	      builder.append("             SELECT B.SEAT_REMAIN FROM VW_GETREMAIN B");
+	      builder.append("             WHERE  B.COURSE_ID = A.COURSE_ID        ");
+	      builder.append("         )                                           ");
+	      builder.append(" WHERE  A.COURSE_ID = ?                    ");
+	      String sql = builder.toString();
+	      
+	      PreparedStatement statement = connection.prepareStatement(sql);
+	      statement.setString(1, courseId);
+	      
+	      int result = statement.executeUpdate();
+
+	      statement.close();
+	      connection.close();
+	      return result;
+	   }
 	
-	/**
-	 * 예약 테이블 기반으로 airplane 테이블의 잔여 좌석 수 update
-	 * @return
-	 * @throws Exception
-	 */
-	public int updateSeatRemain() throws Exception {
-		DriverManager.registerDriver(new OracleDriver()); 
-		Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.35.43:1521:xe", "ks95", "java");
 
-		StringBuilder builder = new StringBuilder();
-		builder.append(" UPDATE airplane a                                  ");
-		builder.append("     SET                                            ");
-		builder.append("         ( a.seat_remain ) = (                      ");
-		builder.append("             SELECT                                 ");
-		builder.append("                 a.seat_total - b.bsum              ");
-		builder.append("             FROM                                   ");
-		builder.append("                 (                                  ");
-		builder.append("                     SELECT                         ");
-		builder.append("                         COUNT(c.reserv_id) AS bsum,");
-		builder.append("                         d.airplane_id AS bid       ");
-		builder.append("                     FROM                           ");
-		builder.append("                         reservation c,             ");
-		builder.append("                         course d                   ");
-		builder.append("                     WHERE                          ");
-		builder.append("                         c.course_id = d.course_id  ");
-		builder.append("                     GROUP BY                       ");
-		builder.append("                         d.airplane_id              ");
-		builder.append("                 ) b                                ");
-		builder.append("             WHERE                                  ");
-		builder.append("                 b.bid = a.airplane_id              ");
-		builder.append("                 AND	c.cancel = 'N'		        ");
-		builder.append("         )                                          ");
-		builder.append(" WHERE                                              ");
-		builder.append("     a.airplane_id IN (                             ");
-		builder.append("         SELECT                                     ");
-		builder.append("             f.airplane_id                          ");
-		builder.append("         FROM                                       ");
-		builder.append("             reservation e,                         ");
-		builder.append("             course f                               ");
-		builder.append("         WHERE                                      ");
-		builder.append("             e.course_id = f.course_id              ");
-		builder.append("     )                                              ");
-		String sql = builder.toString();
-		
-		PreparedStatement statement = connection.prepareStatement(sql);
-
-		int result = statement.executeUpdate();
-
-		statement.close();
-		connection.close();
-		return result;
-	}
-	
 	/**
 	 * 입력받은 예약정보 insert
+	 * 
 	 * @return
 	 * @throws Exception
 	 */
 	public int insertReservInfo(ReservInfoVO reservInfo) throws Exception {
-		DriverManager.registerDriver(new OracleDriver()); 
+		DriverManager.registerDriver(new OracleDriver());
 		Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.35.43:1521:xe", "ks95", "java");
 
 		StringBuilder builder = new StringBuilder();
-		builder.append(" INSERT INTO reservation (                                      ");	
-		builder.append("     reserv_id,                                                 ");	
-		builder.append("     mem_id,                                                    ");	
-		builder.append("     course_id,                                                 ");	
-		builder.append("     seat_no,                                                   ");	
-		builder.append("     pass_name,                                                 ");	
-		builder.append("     pass_phone,                                                ");	
-		builder.append("     pass_reg,                                                  ");	
-		builder.append("     cancel                                                     ");	
-		builder.append(" ) VALUES (                                                     ");	
-		builder.append("     (                                                          ");	
-		builder.append("         SELECT                                                 ");	
-		builder.append("             nvl(MAX(reserv_id) + 1,TO_CHAR(SYSDATE,'YYYYMMDD') ");	
-		builder.append("             || '00001')                                        ");	
-		builder.append("         FROM                                                   ");	
-		builder.append("             reservation                                        ");	
-		builder.append("         WHERE                                                  ");	
-		builder.append("             substr(reserv_id,1,8) = TO_CHAR(SYSDATE,'YYYYMMDD')");	
-		builder.append("     ),                                                         ");	
-		builder.append("     ?,                                                         ");	
-		builder.append("     ?,                                                         ");	
-		builder.append("     ?,                                                         ");	
-		builder.append("     ?,                                                         ");	
-		builder.append("     ?,                                                         ");	
-		builder.append("     ?,                                                         ");	
-		builder.append("     ?                                                          ");	
-		builder.append(" );                                                             ");	
+		builder.append(" INSERT INTO reservation (                                      ");
+		builder.append("     reserv_id,                                                 ");
+		builder.append("     mem_id,                                                    ");
+		builder.append("     course_id,                                                 ");
+		builder.append("     seat_no,                                                   ");
+		builder.append("     pass_name,                                                 ");
+		builder.append("     pass_phone,                                                ");
+		builder.append("     pass_reg,                                                  ");
+		builder.append("     cancel                                                     ");
+		builder.append(" ) VALUES (                                                     ");
+		builder.append("     (                                                          ");
+		builder.append("         SELECT                                                 ");
+		builder.append("             nvl(MAX(reserv_id) + 1,TO_CHAR(SYSDATE,'YYYYMMDD') ");
+		builder.append("             || '00001')                                        ");
+		builder.append("         FROM                                                   ");
+		builder.append("             reservation                                        ");
+		builder.append("         WHERE                                                  ");
+		builder.append("             substr(reserv_id,1,8) = TO_CHAR(SYSDATE,'YYYYMMDD')");
+		builder.append("     ),                                                         ");
+		builder.append("     ?,                                                         ");
+		builder.append("     ?,                                                         ");
+		builder.append("     ?,                                                         ");
+		builder.append("     ?,                                                         ");
+		builder.append("     ?,                                                         ");
+		builder.append("     ?,                                                         ");
+		builder.append("     ?                                                          ");
+		builder.append(" )                                                             ");
 		String sql = builder.toString();
-		
+
 		PreparedStatement statement = connection.prepareStatement(sql);
 		statement.setString(1, reservInfo.getMemID());
 		statement.setString(2, reservInfo.getCourseID());
@@ -202,14 +179,14 @@ public class ReservDAO {
 		statement.setString(5, reservInfo.getPhone());
 		statement.setString(6, reservInfo.getReg());
 		statement.setString(7, reservInfo.getCancel());
-		
+
 		int result = statement.executeUpdate();
 
 		statement.close();
 		connection.close();
 		return result;
 	}
-	
+
 	/**
 	 * 예약 완료시 마일리지 추가
 	 * 
@@ -258,4 +235,84 @@ public class ReservDAO {
 
 		return executeUpdate;
 	}
+
+	/**
+	 * 예약완료 후 예약한 확인 정보 출력
+	 * 
+	 * @param memId
+	 * @param courseID
+	 * @return
+	 * @throws Exception
+	 */
+	public List<CheckVO> printConfirmReserve(String memId, String courseID) throws Exception {
+		// 0. 드라이버 로딩
+		DriverManager.registerDriver(new OracleDriver());
+
+		// 1. 접속
+		Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.35.43:1521:xe", "ks95", "java");
+
+		// 2. 쿼리 작성
+		StringBuilder builder = new StringBuilder();
+		builder.append("SELECT ");
+		builder.append("    a.cancel, ");
+		builder.append("    a.reserv_id, ");
+		builder.append("    a.pass_name, ");
+		builder.append("    a.course_id, ");
+		builder.append("    a.seat_no, ");
+		builder.append("    b.dep_location, ");
+		builder.append("    b.dep_date, ");
+		builder.append("    b.dep_time, ");
+		builder.append("    b.airport_id, ");
+		builder.append("    b.arr_time,  ");
+		builder.append("    c.airline, ");
+		builder.append("    b.airplane_id ");
+		builder.append("FROM ");
+		builder.append("    reservation a, ");
+		builder.append("    course b, ");
+		builder.append("    airplane c ");
+		builder.append("WHERE ");
+		builder.append("    a.mem_id = ? ");
+		builder.append("    AND	  a.course_id = ? ");
+		builder.append("    AND	  a.cancel = 'N' ");
+		builder.append("    AND   a.course_id = b.course_id ");
+		builder.append("    AND   b.airplane_id = c.airplane_id ");
+		builder.append("ORDER BY ");
+		builder.append("    1 ");
+
+		String sql = builder.toString();
+
+		// 3. 준비된 쿼리에 데이터 입력
+		PreparedStatement statement = connection.prepareStatement(sql);
+		statement.setString(1, memId);
+		statement.setString(2, courseID);
+
+		// 4. 쿼리 실행
+		ResultSet resultSet = statement.executeQuery();
+
+		// 5. 쿼리 결과 가져오기
+		List<CheckVO> list = new ArrayList<>();
+		while (resultSet.next()) {
+			String cancel = resultSet.getString("cancel");
+			String reservId = resultSet.getString("reserv_id");
+			String passName = resultSet.getString("pass_name");
+			String courseId = resultSet.getString("course_id");
+			String seatNo = resultSet.getString("seat_no");
+			String depLocation = resultSet.getString("dep_location");
+			String depDate = DataFormatUtil.dateFormat(resultSet.getString("dep_date"));
+			String depTime = resultSet.getString("dep_time");
+			String airportId = resultSet.getString("airport_id");
+			String arrTime = resultSet.getString("arr_time");
+			String airline = resultSet.getString("airline");
+			String airplaneId = resultSet.getString("airplane_id");
+			list.add(new CheckVO(cancel, reservId, passName, courseId, seatNo, depLocation, depDate, depTime, airportId,
+					arrTime, airline, airplaneId));
+		}
+
+		// 6. 자원 반납
+		resultSet.close();
+		statement.close();
+		connection.close();
+		return list;
+	}
+
 }
