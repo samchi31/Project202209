@@ -194,7 +194,7 @@ public class ReservDAO {
 	 * @return
 	 * @throws Exception
 	 */
-	public int updatePlusMileage(String reservID) throws Exception {
+	public int updatePlusMileage(int numPassengers, String courseId, String memId) throws Exception {
 		// 0. 드라이버 로딩
 //         Class.forName("oracle.jdbc.driver.OracleDriver");
 		DriverManager.registerDriver(new OracleDriver());
@@ -202,29 +202,37 @@ public class ReservDAO {
 		Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@192.168.35.43:1521:xe", "ks95", "java");
 		// 2. 쿼리 작성
 		StringBuilder builder = new StringBuilder();
-		builder.append(" UPDATE member");
-		builder.append("     SET");
-		builder.append("         MILEAGE = MILEAGE + (");
-		builder.append("             SELECT");
-		builder.append("                 SUM(PRICE * 0.01)");
-		builder.append("             FROM");
-		builder.append("                 course a,");
-		builder.append("                 reservation b");
-		builder.append("             WHERE");
-		builder.append("                 a.COURSE_ID = b.COURSE_ID");
-		builder.append("                 AND   b.MEM_ID = ?");
-		builder.append("             GROUP BY");
-		builder.append("                 a.PRICE");
-		builder.append("         )");
-		builder.append(" WHERE");
-		builder.append("     mem_id = ?");
-
+//		builder.append(" UPDATE member");
+//		builder.append("     SET");
+//		builder.append("         MILEAGE = MILEAGE + (");
+//		builder.append("             SELECT");
+//		builder.append("                 SUM(PRICE * 0.01)");
+//		builder.append("             FROM");
+//		builder.append("                 course a,");
+//		builder.append("                 reservation b");
+//		builder.append("             WHERE");
+//		builder.append("                 a.COURSE_ID = b.COURSE_ID");
+//		builder.append("                 AND   b.MEM_ID = ?");
+//		builder.append("             GROUP BY");
+//		builder.append("                 a.PRICE");
+//		builder.append("         )");
+//		builder.append(" WHERE");
+//		builder.append("     mem_id = ?");
+		
+		builder.append(" UPDATE  member                         ");
+		builder.append(" SET     mileage = mileage + (                    ");
+		builder.append("             SELECT  SUM(price * ? * 0.01)");
+		builder.append("             FROM    course             ");
+		builder.append("             WHERE   course_id =?       ");
+		builder.append("             )                          ");
+		builder.append(" WHERE   mem_id =?                      ");
 		String sql = builder.toString();
 
 		// 3. 준비된 쿼리에 데이터 입력
 		PreparedStatement statement = connection.prepareStatement(sql);
-		statement.setString(1, reservID);
-		statement.setString(2, reservID);
+		statement.setInt(1, numPassengers);
+		statement.setString(2, courseId);
+		statement.setString(3, memId);
 
 		// 4. 쿼리 실행
 		int executeUpdate = statement.executeUpdate();

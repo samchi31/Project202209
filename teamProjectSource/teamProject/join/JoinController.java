@@ -12,7 +12,11 @@ public class JoinController {
 	
 	static JoinService service = JoinService.getInstance();
 	
-	public static int insertJoin(JoinVO vo) throws Exception { // int?
+	public int insertJoin(JoinVO vo) throws Exception { // int?
 		return service.insertJoin(vo);
+	}
+	
+	public String getMemID(String memId) throws Exception {
+		return service.getMemID(memId);
 	}
 }

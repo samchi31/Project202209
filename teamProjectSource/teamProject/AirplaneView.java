@@ -28,6 +28,7 @@ public class AirplaneView {
 	private CancelController cancelController = CancelController.getInstance();
 	private FindIdController findIdController = FindIdController.getInstance();
 	private FindPasswordController findPasswordController = FindPasswordController.getInstance();
+	private JoinController joinController = JoinController.getInstance();
 
 	private String id;
 	private String passwd;
@@ -54,7 +55,7 @@ public class AirplaneView {
 					System.out.println();
 					System.out.print("메뉴 선택 > ");
 					menuChoice = ScanUtil.nextInt();
-					if (menuChoice == 1 || menuChoice == 2 || menuChoice == 3 || menuChoice == 4) {
+					if (menuChoice == 1 || menuChoice == 2 || menuChoice == 3 || menuChoice == 4 || menuChoice == 0) {
 						break;
 					} else {
 						System.out.println("잘못된 입력입니다. 다시 입력해주세요");
@@ -83,10 +84,14 @@ public class AirplaneView {
 		int memBir = 0;
 		while (true) {
 			try {
-				System.out.print("아이디 : ");
+				System.out.print("아이디 > ");
 				memId = ScanUtil.nextLine();
 				if (memId.matches("\\w+")) {
-					break;
+					if(duplicateId(memId)) {
+						break;
+					} else {
+						System.out.println("중복된 아이디 입니다.");
+					}
 				} else {
 					System.out.println("잘못된 입력입니다. 다시 입력해주세요.");
 				}
@@ -97,8 +102,24 @@ public class AirplaneView {
 			}
 		}
 		System.out.println("비밀번호 : java");
-		System.out.print("이름 : ");
-		String memName = ScanUtil.nextLine();
+		String memName = null;
+		while (true) {
+			try {
+				System.out.print("이름 > ");
+				memName = ScanUtil.nextLine();
+				if (memName.matches("\\w+")) {
+					break;
+				} else {
+					System.out.println("잘못된 입력입니다. 다시 입력해주세요");
+				}
+			} catch (NullPointerException ne) {
+				System.out.println("잘못된 입력입니다. 다시 입력해주세요");
+			} catch (Exception e) {
+				System.out.println("오류 발생 : ");
+				e.printStackTrace();
+				break;
+			}
+		}
 		while (true) {
 			try {
 				System.out.print("생년월일 6자리) : ");
@@ -115,10 +136,10 @@ public class AirplaneView {
 				break;
 			}
 		}
-		String account;
+		String account = null;
 		while (true) {
 			try {
-				System.out.print("계좌번호 : ");
+				System.out.print("계좌번호 > ");
 				account = ScanUtil.nextLine();
 				if (account.matches("\\d{9,}")) {
 					break;
@@ -130,25 +151,48 @@ public class AirplaneView {
 				e.printStackTrace();
 			}
 		}
-		System.out.print("은행 : ");
+		System.out.print("은행 > ");
 		String bank = ScanUtil.nextLine();
 
-		int insertJoin = JoinController.insertJoin(new JoinVO(memId, memName, memBir, account, bank));
+		int insertJoin = joinController.insertJoin(new JoinVO(memId, memName, memBir, account, bank));
 		if (insertJoin > 0) {
-			System.out.println("회원가입이 완료됐습니다.");
+			System.out.println("::::::::::::: 회원가입이 완료됐습니다. :::::::::::::");
 		} else {
-			System.out.println("회원가입이 실패했습니다.");
+			System.out.println("::::::::::::: 회원가입이 실패했습니다. :::::::::::::");
 		}
+	}
+	
+	public boolean duplicateId(String joinId) throws Exception {
+		if(joinController.getMemID(joinId) == null) {
+			return true;
+		}
+		return false;
 	}
 
 	public void FindId() throws Exception {
-		System.out.println(">>>>>>>>>아이디 찾기<<<<<<<<<");
-		System.out.print("이름 : ");
-		String typeName = ScanUtil.nextLine();
+		System.out.println("::::::::::::: 아이디 찾기 :::::::::::::");
+		String typeName = null;
+		while (true) {
+			try {
+				System.out.printf("이름 > ");
+				typeName = ScanUtil.nextLine();
+				if (typeName.matches("\\w+")) {
+					break;
+				} else {
+					System.out.println("잘못된 입력입니다. 다시 입력해주세요");
+				}
+			} catch (NullPointerException ne) {
+				System.out.println("잘못된 입력입니다. 다시 입력해주세요");
+			} catch (Exception e) {
+				System.out.println("오류 발생 : ");
+				e.printStackTrace();
+				break;
+			}
+		}
 		int typeBir = 0;
 		while (true) {
 			try {
-				System.out.print("생년월일 6자리) : ");
+				System.out.print("생년월일 6자리) > ");
 				String memBirString = ScanUtil.nextLine();
 				if (memBirString.matches("\\d{6}")) {
 					typeBir = Integer.parseInt(memBirString);
@@ -165,7 +209,7 @@ public class AirplaneView {
 		String typeAccount;
 		while (true) {
 			try {
-				System.out.print("계좌번호 : ");
+				System.out.print("계좌번호 > ");
 				typeAccount = ScanUtil.nextLine();
 				if (typeAccount.matches("\\d{9,}")) {
 					break;
@@ -179,24 +223,28 @@ public class AirplaneView {
 		}
 
 		FindIdVO vo = findIdController.bringId(typeName, typeBir, typeAccount);
-		System.out.println("-------------------------");
-		System.out.printf("찾은 아이디 : %s\n", vo.getMemId());
-		System.out.println("-------------------------");
+		try {
+			System.out.println("-------------------------");
+			System.out.printf("찾은 아이디 : %s\n", vo.getMemId());
+			System.out.println("-------------------------");
+		} catch (NullPointerException e) {
+			System.out.println("::::::::::::: 입력하신 정보에 해당하는 아이디가 없습니다. :::::::::::::");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
-	// sss
 
-	// sss
 	/**
 	 * 비밀번호 찾기
 	 * 
 	 * @throws Exception
 	 */
 	public void FindPassword() throws Exception {
-		System.out.println(">>>>>>>>>비밀번호 찾기<<<<<<<<<");
-		String typeId = null;
+		System.out.println("::::::::::::: 비밀번호 찾기 :::::::::::::");
+		String typeId = "";
 		while (true) {
 			try {
-				System.out.print("아이디 : ");
+				System.out.print("아이디 > ");
 				typeId = ScanUtil.nextLine();
 				if (typeId.matches("\\w+")) {
 					break;
@@ -209,12 +257,29 @@ public class AirplaneView {
 				break;
 			}
 		}
-		System.out.print("이름 : ");
-		String typeName = ScanUtil.nextLine();
+		
+		String typeName = null;
+		while (true) {
+			try {
+				System.out.printf("이름 > ");
+				typeName = ScanUtil.nextLine();
+				if (typeName.matches("\\w+")) {
+					break;
+				} else {
+					System.out.println("잘못된 입력입니다. 다시 입력해주세요");
+				}
+			} catch (NullPointerException ne) {
+				System.out.println("잘못된 입력입니다. 다시 입력해주세요");
+			} catch (Exception e) {
+				System.out.println("오류 발생 : ");
+				e.printStackTrace();
+				break;
+			}
+		}
 		int typeBir = 0;
 		while (true) {
 			try {
-				System.out.print("생년월일 6자리) : ");
+				System.out.print("생년월일 6자리) > ");
 				String memBirString = ScanUtil.nextLine();
 				if (memBirString.matches("\\d{6}")) {
 					typeBir = Integer.parseInt(memBirString);
@@ -231,7 +296,7 @@ public class AirplaneView {
 		String typeAccount = null;
 		while (true) {
 			try {
-				System.out.print("계좌번호 : ");
+				System.out.print("계좌번호 > ");
 				typeAccount = ScanUtil.nextLine();
 				if (typeAccount.matches("\\d{9,20}")) {
 					break;
@@ -245,9 +310,15 @@ public class AirplaneView {
 		}
 
 		FindPasswordVO vo = findPasswordController.bringPassword(typeId, typeName, typeBir, typeAccount);
-		System.out.println("-------------------------");
-		System.out.printf("찾은 아이디 : %s\n", vo.getPassword());
-		System.out.println("-------------------------");
+		try {
+			System.out.println("-------------------------");
+			System.out.printf("찾은 비밀번호 : %s\n", vo.getPassword());
+			System.out.println("-------------------------");
+		} catch (NullPointerException e) {
+			System.out.println(" ::::::::::::: 입력하신 정보에 해당하는 회원정보가 없습니다. :::::::::::::");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	// sss
@@ -330,8 +401,8 @@ public class AirplaneView {
 				System.out.println("1. 베이징");
 				System.out.println("2. 동경");
 				System.out.println("3. 하노이");
-				System.out.print("도착지 선택 > ");
 				System.out.println();
+				System.out.print("도착지 선택 > ");
 				country = ScanUtil.nextInt();
 				if (country == 1 || country == 2 || country == 3) {
 					break;
@@ -373,7 +444,7 @@ public class AirplaneView {
 			}
 		}
 		System.out.println("");
-		System.out.println("::::::::::::: 탑승객 수 입력 :::::::::::::");
+		System.out.println("::::::::::::: 탑승자 수 입력 :::::::::::::");
 		System.out.println("");
 		int num = 0;
 		while (true) {
@@ -434,8 +505,24 @@ public class AirplaneView {
 			}
 
 			System.out.println("\n::::::::::::: 탑승자 정보입력 :::::::::::::\n");
-			System.out.printf("탑승자%d 이름 입력 > ", i + 1);
-			String name = ScanUtil.nextLine();
+			String name = null;
+			while (true) {
+				try {
+					System.out.printf("탑승자%d 이름 입력 > ", i + 1);
+					name = ScanUtil.nextLine();
+					if (name.matches("\\w+")) {
+						break;
+					} else {
+						System.out.println("잘못된 입력입니다. 다시 입력해주세요");
+					}
+				} catch (NullPointerException ne) {
+					System.out.println("잘못된 입력입니다. 다시 입력해주세요");
+				} catch (Exception e) {
+					System.out.println("오류 발생 : ");
+					e.printStackTrace();
+					break;
+				}
+			}
 			String call = "";
 			while (true) {
 				try {
@@ -472,7 +559,9 @@ public class AirplaneView {
 			passengers.add(new ReservInfoVO(id, courseID, seatNum, name, call, birth));
 		}
 		// db 에 저장
-		if (reservController.insertReservInfo(passengers) > 0) {
+		if (reservController.insertReservInfo(passengers) > 0)
+
+		{
 			System.out.println("예약이 완료되었습니다.");
 		} else {
 			System.out.println("예약에 실패했습니다.");
@@ -481,7 +570,7 @@ public class AirplaneView {
 		// 예약 내역 출력
 		printConfirmReserve(id, courseID);
 		// 마일리지 update
-		reservController.updateMileage(id);
+		reservController.updateMileage(num, courseID, id);
 	}
 
 	/**
@@ -499,7 +588,7 @@ public class AirplaneView {
 		System.out.println(
 				"---------------------------------------------------------------------------------------------------------------");
 		for (int i = 0; i < list.size(); i++) {
-			System.out.printf("  %s |  %s   | %s |   %s  |  %4s  |  %s   |     %d    |  %s  |  %d  | %10s \n",
+			System.out.printf("  %s |  %s   | %s |   %s  |  %4s  |  %s   |     %2d    |  %s  |  %d  | %10s \n",
 					list.get(i).getCourseId(), list.get(i).getDeparture(), list.get(i).getDepartDate(),
 					list.get(i).getDepartTime(), list.get(i).getAirportID(), list.get(i).getArrivalTime(),
 					list.get(i).getRemainSeat(), list.get(i).getDistance(), list.get(i).getPrice(),
@@ -620,15 +709,20 @@ public class AirplaneView {
 
 	public void printConfirmReserve(String memId, String courseID) throws Exception {
 		List<CheckVO> list = reservController.printConfirmReserve(memId, courseID);
+		System.out.println("");
+		System.out
+				.println("     예약번호    | 탑승자 |  항공편  | 좌석번호 | 출발지 |   출발일   | 출발시간 | 도착지 | 도착시간 | 비행기번호 |      항공사   ");
 		System.out.println(
-				"|     예약번호    | 탑승자 |   항공편  | 좌석번호 | 출발지  |    출발일   | 출발시간 |  도착지 | 도착시간 |    항공사   | 비행기 번호 |");
+				"-------------------------------------------------------------------------------------------------------------------------------------------------");
 		for (int i = 0; i < list.size(); i++) {
-			System.out.printf("| %s | %s | %s |   %s   |  %s  | %s |  %s |  %s  |  %s | %s |   %s   |\n",
+			System.out.printf("  %s  | %s | %s |    %s    |   %s  | %s |   %s  |   %s  |   %s  |    %s    |   %10s  \n",
 					list.get(i).getReservId(), list.get(i).getPassName(), list.get(i).getCourseId(),
 					list.get(i).getSeatNo(), list.get(i).getDepLocation(), list.get(i).getDepDate(),
 					list.get(i).getDepTime(), list.get(i).getAirportId(), list.get(i).getArrTime(),
-					list.get(i).getAirline(), list.get(i).getAirplaneId());
+					list.get(i).getAirplaneId(), list.get(i).getAirline());
 		}
+		System.out.println("");
+		System.out.println("");
 	}
 
 	// -------------------------------------------------------------------------------------------------------------------------
@@ -678,16 +772,30 @@ public class AirplaneView {
 				break;
 			}
 		}
-		// 마일리지 차감
-		cancelController.updateMileage(reservID);
 		// 예약내역 취소
 		if (cancelController.updateReserveList(reservID) > 0) {
-			System.out.println("예약을 취소합니다");
+			System.out.println("예약을 취소합니다\n");
 		} else {
 			System.out.println("예약취소를 실패했습니다");
 		}
+		// 마일리지 차감
+		cancelController.updateMileage(reservID);
 		// 비행기 T 잔여좌석 update
 		reservController.updateSeatRemain(cancelController.getCourseID(reservID));
+		// 예약취소 내역 확인
+		CheckVO vo = checkController.printReservDetail(reservID);
+		System.out.println("---------------------------------------");
+		System.out.printf("취소여부\t: %s\n---------------------------------------\n", vo.getCancel());
+		System.out.printf("예약번호\t: %s\n회원아이디\t: %s\n---------------------------------------\n", vo.getReservId(),
+				vo.getMemId());
+		System.out.printf("탑승자\t\t: %s\n전화번호\t: %s\n생년월일\t: %s\n---------------------------------------\n",
+				vo.getPassName(), vo.getPassPhone(), vo.getPassReg());
+		System.out.printf(
+				"항공편\t\t: %s\n좌석번호\t: %s\n출발지\t\t: %s\n출발일\t\t: %s\n출발시간\t: %s\n도착지\t\t: %s\n도착시간\t: %s\n항공사\t\t: %s\n비행기번호\t: %s\n---------------------------------------\n",
+				vo.getCourseId(), vo.getSeatNo(), vo.getDepLocation(), vo.getDepDate(), vo.getDepTime(),
+				vo.getAirportId(), vo.getArrTime(), vo.getAirline(), vo.getAirplaneId());
+		System.out.printf("가격\t\t: %d\n계좌번호\t: %s\n은행\t\t: %s\n취소 후 마일리지: %s점\n", vo.getPrice(), vo.getAccount(), vo.getBank(), vo.getMileage());
+		System.out.println("");
 	}
 
 	// 목록
@@ -770,8 +878,8 @@ public class AirplaneView {
 		int menuChoice = -1;
 		while (true) {// sy
 			try {
-				System.out.println("\\n1. 세부내역     2. 메인 메뉴");
-				System.out.print("\\n선택할 메뉴의 번호를 입력해주세요 > ");
+				System.out.println("\n1. 세부내역     2. 메인 메뉴");
+				System.out.print("\n선택할 메뉴의 번호를 입력해주세요 > ");
 				menuChoice = ScanUtil.nextInt();
 				if (menuChoice == 1 || menuChoice == 2) {
 					break;
@@ -800,7 +908,7 @@ public class AirplaneView {
 		String typeReservId = "";
 		while (true) {
 			try {
-				System.out.print("\n보고 싶은 예약번호 입력 > ");
+				System.out.printf("\n보고 싶은 예약번호 입력 > ");
 				typeReservId = ScanUtil.nextLine();
 				if (typeReservId.matches("[0-9]{13}") && existReserveID(typeReservId)) {
 					break;
@@ -818,8 +926,6 @@ public class AirplaneView {
 		System.out.printf("취소여부\t: %s\n---------------------------------------\n", vo.getCancel());
 		System.out.printf("예약번호\t: %s\n회원번호\t: %s\n---------------------------------------\n", vo.getReservId(),
 				vo.getMemId());
-		System.out.printf("탑승자\t\t: %s\n전화번호\t: %s\n생년월일\t: %s\n---------------------------------------\n",
-				vo.getPassName(), vo.getPassPhone(), vo.getPassReg());
 		System.out.printf("탑승자\t\t: %s\n전화번호\t: %s\n생년월일\t: %s\n---------------------------------------\n",
 				vo.getPassName(), vo.getPassPhone(), vo.getPassReg());
 		System.out.printf(
