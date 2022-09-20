@@ -107,7 +107,7 @@ public class AirplaneView {
 			try {
 				System.out.print("이름 > ");
 				memName = ScanUtil.nextLine();
-				if (memName.matches("\\w+")) {
+				if (memName.matches("[가-힣A-Za-z]+")) {
 					break;
 				} else {
 					System.out.println("잘못된 입력입니다. 다시 입력해주세요");
@@ -176,7 +176,7 @@ public class AirplaneView {
 			try {
 				System.out.printf("이름 > ");
 				typeName = ScanUtil.nextLine();
-				if (typeName.matches("\\w+")) {
+				if (typeName.matches("[가-힣A-Za-z]+")) {
 					break;
 				} else {
 					System.out.println("잘못된 입력입니다. 다시 입력해주세요");
@@ -263,7 +263,7 @@ public class AirplaneView {
 			try {
 				System.out.printf("이름 > ");
 				typeName = ScanUtil.nextLine();
-				if (typeName.matches("\\w+")) {
+				if (typeName.matches("[가-힣A-Za-z]+")) {
 					break;
 				} else {
 					System.out.println("잘못된 입력입니다. 다시 입력해주세요");
@@ -510,7 +510,7 @@ public class AirplaneView {
 				try {
 					System.out.printf("탑승자%d 이름 입력 > ", i + 1);
 					name = ScanUtil.nextLine();
-					if (name.matches("\\w+")) {
+					if (name.matches("[가-힣A-Za-z]+")) {
 						break;
 					} else {
 						System.out.println("잘못된 입력입니다. 다시 입력해주세요");
