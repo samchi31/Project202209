@@ -32,7 +32,7 @@ public class AirplaneView {
 
 	private String id;
 	private String passwd;
-	private boolean isLogin = false; // 로그인한 상태인지
+	private boolean isLogin = false; 		// 로그인한 상태인지
 
 	// sss
 	/**
